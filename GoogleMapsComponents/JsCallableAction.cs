@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 
@@ -11,6 +12,8 @@ public class JsCallableAction
     private readonly Type[] _argumentTypes;
     private readonly IJSRuntime _jsRuntime;
 
+
+    [DynamicDependency(nameof(Invoke))]
     public JsCallableAction(IJSRuntime jsRuntime, Delegate @delegate, params Type[] argumentTypes)
     {
         _jsRuntime = jsRuntime;
