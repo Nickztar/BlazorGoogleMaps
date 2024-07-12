@@ -23,7 +23,7 @@ public class Autocomplete : EventEntityBase
     /// <summary>
     /// Returns the bounds to which predictions are biased.
     /// </summary>
-    public Task<LatLngBoundsLiteral> GetBounds()
+    public Task<LatLngBoundsLiteral?> GetBounds()
     {
         return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
     }
@@ -32,7 +32,7 @@ public class Autocomplete : EventEntityBase
     /// Returns the fields to be included for the Place in the details response when the details
     /// are successfully retrieved. For a list of fields see PlaceResult.
     /// </summary>
-    public Task<IEnumerable<string>> GetFields()
+    public Task<IEnumerable<string>?> GetFields()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<string>>("getFields");
     }
@@ -41,7 +41,7 @@ public class Autocomplete : EventEntityBase
     /// Returns the details of the Place selected by user if the details were successfully retrieved.
     /// Otherwise returns a stub Place object, with the name property set to the current value of the input field.
     /// </summary>
-    public Task<PlaceResult> GetPlace()
+    public Task<PlaceResult?> GetPlace()
     {
         return _jsObjectRef.InvokeAsync<PlaceResult>("getPlace");
     }

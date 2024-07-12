@@ -15,7 +15,7 @@ public class StyleOptions
     /// <summary>
     /// Mouse cursor to show on hover. Only applies to point geometries.
     /// </summary>
-    public string Cursor { get; set; }
+    public string? Cursor { get; set; }
 
     /// <summary>
     /// If true, the object can be dragged across the map and the underlying feature will have its geometry updated.
@@ -34,7 +34,7 @@ public class StyleOptions
     /// All CSS3 colors are supported except for extended named colors.
     /// Only applies to polygon geometries.
     /// </summary>
-    public string FillColor { get; set; }
+    public string? FillColor { get; set; }
 
     /// <summary>
     /// The fill opacity between 0.0 and 1.0. Only applies to polygon geometries.
@@ -52,14 +52,14 @@ public class StyleOptions
     /// Defines the image map used for hit detection.
     /// Only applies to point geometries.
     /// </summary>
-    public MarkerShape Shape { get; set; }
+    public MarkerShape? Shape { get; set; }
 
     /// <summary>
     /// The stroke color.
     /// All CSS3 colors are supported except for extended named colors.
     /// Only applies to line and polygon geometries.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The stroke opacity between 0.0 and 1.0.
@@ -77,7 +77,7 @@ public class StyleOptions
     /// Rollover text.
     /// Only applies to point geometries.
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     /// <summary>
     /// Whether the feature is visible.

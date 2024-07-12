@@ -8,7 +8,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     /// <summary>
     /// The offset from the marker's position to the tip of an InfoWindow that has been opened with the marker as anchor.
     /// </summary>
-    public Point AnchorPoint { get; set; }
+    public Point? AnchorPoint { get; set; }
 
     /// <summary>
     /// Which animation to play when marker is added to a map.
@@ -24,7 +24,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     /// <summary>
     /// Mouse cursor to show on hover
     /// </summary>
-    public string Cursor { get; set; }
+    public string? Cursor { get; set; }
 
     /// <summary>
     /// Icon for the foreground.<br/>
@@ -54,7 +54,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     /// <summary>
     /// Marker position. Required.
     /// </summary>
-    public LatLngLiteral Position { get; set; }
+    public required LatLngLiteral Position { get; set; }
 
     /// <summary>
     /// 2021-07 supported only in beta google maps version
@@ -65,10 +65,10 @@ public class MarkerOptions : ListableEntityOptionsBase
     /// <summary>
     /// Image map region definition used for drag/click.
     /// </summary>
-    public MarkerShape Shape { get; set; }
+    public MarkerShape? Shape { get; set; }
 
     /// <summary>
     /// Rollover text
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
 }

@@ -7,10 +7,10 @@
 /// </summary>
 public class IconMouseEvent : MouseEvent
 {
-    public string PlaceId { get; set; }
+    public string? PlaceId { get; set; }
 
-    public IconMouseEvent()
-    {
-
-    }
+    // public IconMouseEvent()
+    // {
+    //
+    // }
 }

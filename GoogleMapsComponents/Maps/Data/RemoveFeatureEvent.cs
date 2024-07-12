@@ -8,5 +8,5 @@ public class RemoveFeatureEvent
     /// <summary>
     /// The feature that was removed from the FeatureCollection.
     /// </summary>
-    public Feature Feature { get; set; }
+    public Feature Feature { get; set; } = default!;
 }

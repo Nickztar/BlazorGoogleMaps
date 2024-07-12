@@ -10,8 +10,6 @@ namespace GoogleMapsComponents.Maps;
 /// </summary>
 public class InfoWindow : EventEntityBase, IJsObjectRef
 {
-    private readonly JsObjectRef _jsObjectRef;
-
     public Guid Guid => _jsObjectRef.Guid;
 
     /// <summary>
@@ -42,7 +40,6 @@ public class InfoWindow : EventEntityBase, IJsObjectRef
     /// <param name="jsObjectRef"></param>
     private InfoWindow(JsObjectRef jsObjectRef) : base(jsObjectRef)
     {
-        _jsObjectRef = jsObjectRef;
     }
 
     public override void Dispose()
@@ -59,12 +56,12 @@ public class InfoWindow : EventEntityBase, IJsObjectRef
         return _jsObjectRef.InvokeAsync("close");
     }
 
-    public Task<string> GetContent()
+    public Task<string?> GetContent()
     {
         return _jsObjectRef.InvokeAsync<string>("getContent");
     }
 
-    public Task<LatLngLiteral> GetPosition()
+    public Task<LatLngLiteral?> GetPosition()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getPosition");
     }

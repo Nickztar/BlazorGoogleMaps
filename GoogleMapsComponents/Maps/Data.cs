@@ -58,7 +58,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task<Feature> Add(OneOf<Feature, FeatureOptions> feature)
+    public Task<Feature?> Add(OneOf<Feature, FeatureOptions> feature)
     {
         return _jsObjectRef.InvokeAsync<Feature>(
             "add",
@@ -72,10 +72,10 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// <param name="geoJson"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public Task<object> AddGeoJson(Feature geoJson, GeoJsonOptions? options = null)
+    public Task<object?> AddGeoJson(Feature geoJson, GeoJsonOptions? options = null)
     {
         return _jsObjectRef.InvokeAsync<object>(
-            "addGeoJson", geoJson.Properties.First(), options);
+            "addGeoJson", geoJson.Properties?.FirstOrDefault(), options);
     }
 
     /// <summary>
@@ -91,6 +91,8 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
         //addGeoJson returns features array right away, so i add them explicitly to mapObjects and return just guids
         var addedFeaturesGuids = await _jsObjectRef.InvokeAsync<IReadOnlyCollection<Guid>>("addGeoJson", geoJson, options);
         var features = new List<Feature>();
+        if (addedFeaturesGuids is null) return features;
+        
         foreach (var addedFeatureGuid in addedFeaturesGuids)
         {
             var feature = new Feature(new JsObjectRef(_jsObjectRef.JSRuntime, addedFeatureGuid));
@@ -128,7 +130,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// Possible drawing modes are "Point", "LineString" or "Polygon".
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<string>> GetControls()
+    public Task<IEnumerable<string>?> GetControls()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<string>>(
             "getControls");
@@ -139,7 +141,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything. Possible drawing modes are null, "Point", "LineString" or "Polygon".
     /// </summary>
     /// <returns></returns>
-    public Task<string> GetDrawingMode()
+    public Task<string?> GetDrawingMode()
     {
         return _jsObjectRef.InvokeAsync<string>(
             "getDrawingMode");
@@ -151,7 +153,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Task<Feature> GetFeatureById(OneOf<int, string> id)
+    public Task<Feature?> GetFeatureById(OneOf<int, string> id)
     {
         return _jsObjectRef.InvokeAsync<Feature>(
             "getFeatureById",
@@ -162,7 +164,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// Returns the map on which the features are displayed.
     /// </summary>
     /// <returns></returns>
-    public Map GetMap()
+    public Map? GetMap()
     {
         return _map;
     }
@@ -171,7 +173,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// Gets the style for all features in the collection.
     /// </summary>
     /// <returns></returns>
-    public Task<StyleOptions> GetStyle()
+    public Task<StyleOptions?> GetStyle()
     {
         return _jsObjectRef.InvokeAsync<StyleOptions>(
             "getStyle");
@@ -233,7 +235,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task RevertStyle(Feature feature = null)
+    public Task RevertStyle(Feature? feature = null)
     {
         return _jsObjectRef.InvokeAsync(
             "revertStyle",

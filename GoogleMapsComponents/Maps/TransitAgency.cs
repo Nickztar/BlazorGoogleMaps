@@ -8,15 +8,15 @@ public class TransitAgency
     /// <summary>
     /// The name of this transit agency.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     /// The transit agency's phone number.
     /// </summary>
-    public string Phone { get; set; }
+    public string Phone { get; set; } = default!;
 
     /// <summary>
     /// The transit agency's URL.
     /// </summary>
-    public string Url { get; set; }
+    public string Url { get; set; } = default!;
 }

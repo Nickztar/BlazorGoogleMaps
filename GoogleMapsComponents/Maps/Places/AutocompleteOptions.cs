@@ -8,13 +8,13 @@ public class AutocompleteOptions
     /// <summary>
     /// (optional) The area in which to search for places.
     /// </summary>
-    public LatLngBoundsLiteral Bounds { get; set; }
+    public LatLngBoundsLiteral? Bounds { get; set; }
 
     /// <summary>
     /// (optional) The component restrictions. Component restrictions are used to restrict predictions
     /// to only those within the parent component. For example, the country.
     /// </summary>
-    public ComponentRestrictions ComponentRestrictions { get; set; }
+    public ComponentRestrictions? ComponentRestrictions { get; set; }
 
     /// <summary>
     /// (optional) Fields to be included for the Place in the details response when the details are
@@ -23,7 +23,7 @@ public class AutocompleteOptions
     /// for production deployments). For a list of fields see PlaceResult. Nested fields
     /// can be specified with dot-paths (for example, "geometry.location").
     /// </summary>
-    public string[] Fields { get; set; }
+    public string[]? Fields { get; set; }
 
     /// <summary>
     /// (optional) A boolean value, indicating that the Autocomplete widget should only return
@@ -41,5 +41,5 @@ public class AutocompleteOptions
     /// mix the 'geocode' and 'establishment' types, but note that this will have the same
     /// effect as specifying no types.
     /// </summary>
-    public string[] Types { get; set; }
+    public string[]? Types { get; set; }
 }

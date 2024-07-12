@@ -2,7 +2,7 @@
 
 public class DirectionResponse
 {
-    public DirectionsResult Response { get; set; }
+    public DirectionsResult? Response { get; set; }
 
     public DirectionsStatus Status { get; set; }
 }

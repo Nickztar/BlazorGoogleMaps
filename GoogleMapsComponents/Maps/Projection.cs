@@ -15,16 +15,14 @@ public class Projection : IDisposable
         _jsObjectRef = new JsObjectRef(jsRuntime, id);
     }
 
-    public async Task<Point> FromLatLngToPoint(LatLngLiteral literal)
+    public async Task<Point?> FromLatLngToPoint(LatLngLiteral literal)
     {
-        var result = await _jsObjectRef.InvokeAsync<Point>("fromLatLngToPoint", literal);
-        return result;
+        return await _jsObjectRef.InvokeAsync<Point>("fromLatLngToPoint", literal);
     }
 
-    public async Task<LatLngLiteral> FromPointToLatLng(Point point)
+    public async Task<LatLngLiteral?> FromPointToLatLng(Point point)
     {
-        var result = await _jsObjectRef.InvokeAsync<LatLngLiteral>("fromPointToLatLng", point);
-        return result;
+        return await _jsObjectRef.InvokeAsync<LatLngLiteral>("fromPointToLatLng", point);
     }
 
     public void Dispose()

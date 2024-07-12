@@ -8,5 +8,5 @@ public class AddFeatureEvent
     /// <summary>
     /// The feature that was added to the FeatureCollection.
     /// </summary>
-    public Feature Feature { get; set; }
+    public Feature? Feature { get; set; }
 }

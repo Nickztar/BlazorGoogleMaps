@@ -23,17 +23,17 @@ public class PolylineOptions : ListableEntityOptionsBase
     /// <summary>
     /// The icons to be rendered along the polyline.
     /// </summary>
-    public IEnumerable<IconSequence> Icons { get; set; }
+    public IEnumerable<IconSequence>? Icons { get; set; }
 
     /// <summary>
     /// The ordered sequence of coordinates of the Polyline.
     /// </summary>
-    public IEnumerable<LatLngLiteral> Path { get; set; }
+    public IEnumerable<LatLngLiteral>? Path { get; set; }
 
     /// <summary>
     /// The stroke color. All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The stroke opacity between 0.0 and 1.0.

@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps;
 public class ImageMapType : EventEntityBase, IDisposable
 {
     public Guid Guid => _jsObjectRef.Guid;
-    public string Name { get; private set; }
+    public string? Name { get; private set; }
 
     public static async Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, int minZoom, int maxZoom, string name, float opacity)
     {

@@ -30,7 +30,7 @@ public class Circle : ListableEntityBase<CircleOptions>
     /// Gets the LatLngBounds of this Circle.
     /// </summary>
     /// <returns></returns>
-    public Task<LatLngBoundsLiteral> GetBounds()
+    public Task<LatLngBoundsLiteral?> GetBounds()
     {
         return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
     }
@@ -39,7 +39,7 @@ public class Circle : ListableEntityBase<CircleOptions>
     /// Returns the center of this circle.
     /// </summary>
     /// <returns></returns>
-    public Task<LatLngLiteral> GetCenter()
+    public Task<LatLngLiteral?> GetCenter()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
     }

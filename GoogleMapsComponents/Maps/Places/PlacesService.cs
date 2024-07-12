@@ -40,7 +40,7 @@ public class PlacesService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<PlaceResponse> FindPlaceFromPhoneNumber(FindPlaceFromPhoneNumberRequest request)
+    public async Task<PlaceResponse?> FindPlaceFromPhoneNumber(FindPlaceFromPhoneNumberRequest request)
     {
         return await _jsObjectRef.InvokeAsync<PlaceResponse>("findPlaceFromPhoneNumber", request);
     }
@@ -53,7 +53,7 @@ public class PlacesService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<PlaceResponse> FindPlaceFromQuery(FindPlaceFromQueryRequest request)
+    public async Task<PlaceResponse?> FindPlaceFromQuery(FindPlaceFromQueryRequest request)
     {
         return await _jsObjectRef.InvokeAsync<PlaceResponse>("findPlaceFromQuery", request);
     }
@@ -63,7 +63,7 @@ public class PlacesService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<PlaceResponse> GetDetails(PlaceDetailsRequest request)
+    public async Task<PlaceResponse?> GetDetails(PlaceDetailsRequest request)
     {
         return await _jsObjectRef.InvokeAsync<PlaceResponse>("getDetails", request);
     }

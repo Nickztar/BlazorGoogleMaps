@@ -31,18 +31,12 @@
     [Parameter]
     public string? CssClass { get; set; }
 
-    private string _height = "500px";
-
     /// <summary>
     /// Default height 500px
     /// Used as style atribute "height: {Height}"
     /// </summary>
     [Parameter]
-    public string Height
-    {
-        get => _height;
-        set => _height = value ?? "500px";
-    }
+    public string Height { get; set; } = "500px";
 
     private string StyleStr => $"height: {Height};";
 

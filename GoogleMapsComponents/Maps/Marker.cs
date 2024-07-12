@@ -31,7 +31,7 @@ public class Marker : ListableEntityBase<MarkerOptions>
             "getClickable");
     }
 
-    public Task<string> GetCursor()
+    public Task<string?> GetCursor()
     {
         return _jsObjectRef.InvokeAsync<string>(
             "getCursor");
@@ -70,19 +70,19 @@ public class Marker : ListableEntityBase<MarkerOptions>
             new MarkerLabel { Text = markerLabel.AsT0 };
     }
 
-    public Task<LatLngLiteral> GetPosition()
+    public Task<LatLngLiteral?> GetPosition()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>(
             "getPosition");
     }
 
-    public Task<MarkerShape> GetShape()
+    public Task<MarkerShape?> GetShape()
     {
         return _jsObjectRef.InvokeAsync<MarkerShape>(
             "getShape");
     }
 
-    public Task<string> GetTitle()
+    public Task<string?> GetTitle()
     {
         return _jsObjectRef.InvokeAsync<string>(
             "getTitle");

@@ -61,7 +61,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Computes the center of this LatLngBounds
     /// </summary>
-    public Task<LatLngLiteral> GetCenter()
+    public Task<LatLngLiteral?> GetCenter()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
     }
@@ -69,7 +69,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Returns the north-east corner of this bounds.
     /// </summary>
-    public Task<LatLngLiteral> GetNorthEast()
+    public Task<LatLngLiteral?> GetNorthEast()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getNorthEast");
     }
@@ -77,7 +77,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Returns the south-west corner of this bounds.
     /// </summary>
-    public Task<LatLngLiteral> GetSouthWest()
+    public Task<LatLngLiteral?> GetSouthWest()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getSouthWest");
     }
@@ -101,7 +101,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Returns the literal representation of this bounds
     /// </summary>
-    public Task<LatLngBoundsLiteral> ToJson()
+    public Task<LatLngBoundsLiteral?> ToJson()
     {
         return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("toJSON");
     }
@@ -109,7 +109,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Converts the given map bounds to a lat/lng span.
     /// </summary>
-    public Task<LatLngLiteral> ToSpan()
+    public Task<LatLngLiteral?> ToSpan()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("toSpan");
     }
@@ -119,7 +119,7 @@ public class LatLngBounds : IDisposable
     /// where "lo" corresponds to the southwest corner of the bounding box, while "hi"
     /// corresponds to the northeast corner of that box.
     /// </summary>
-    public Task<string> ToUrlValue(double precision)
+    public Task<string?> ToUrlValue(double precision)
     {
         return _jsObjectRef.InvokeAsync<string>("toUrlValue", precision);
     }
@@ -129,7 +129,7 @@ public class LatLngBounds : IDisposable
     /// where "lo" corresponds to the southwest corner of the bounding box, while "hi"
     /// corresponds to the northeast corner of that box.
     /// </summary>
-    public Task<string> ToUrlValue(decimal precision)
+    public Task<string?> ToUrlValue(decimal precision)
     {
         return ToUrlValue(Convert.ToDouble(precision));
     }

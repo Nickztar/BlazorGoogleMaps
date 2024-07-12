@@ -15,10 +15,10 @@ public class MarkerShape
     /// - poly: coords is [x1, y1, x2, y2...xn, yn] where each x, y pair contains the coordinates of one vertex of the polygon.<br/>
     /// - rect: coords is [x1, y1, x2, y2] where x1, y1 are the coordinates of the upper-left corner of the rectangle and x2, y2 are the coordinates of the lower-right coordinates of the rectangle.
     /// </summary>
-    public IEnumerable<float> Coords { get; set; }
+    public IEnumerable<float> Coords { get; set; } = [];
 
     /// <summary>
     /// Describes the shape's type and can be: circle, poly or rect.
     /// </summary>
-    public string Type { get; set; }
+    public string Type { get; set; } = "rect";
 }

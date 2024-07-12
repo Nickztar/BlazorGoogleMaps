@@ -8,15 +8,15 @@ public class RemovePropertyEvent
     /// <summary>
     /// The feature whose property was removed.
     /// </summary>
-    public Feature Feature { get; set; }
+    public Feature Feature { get; set; } = default!;
 
     /// <summary>
     /// The property name.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     /// The previous value.
     /// </summary>
-    public object OldValue { get; set; }
+    public object? OldValue { get; set; }
 }

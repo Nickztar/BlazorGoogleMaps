@@ -8,17 +8,17 @@ public class TransitVehicle
     /// <summary>
     /// A URL for an icon that corresponds to the type of vehicle used on this line.
     /// </summary>
-    public string Icon { get; set; }
+    public string? Icon { get; set; }
 
     /// <summary>
     /// A URL for an icon that corresponds to the type of vehicle used in this region instead of the more general icon.
     /// </summary>
-    public string LocalIcon { get; set; }
+    public string? LocalIcon { get; set; }
 
     /// <summary>
     /// A name for this type of TransitVehicle, e.g. "Train" or "Bus".
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// The type of vehicle used, e.g. train, bus, or ferry.

@@ -49,7 +49,7 @@ public class HeatmapLayer : IDisposable
     /// Returns the data points currently displayed by this heatmap.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<object>> GetData()
+    public Task<IEnumerable<object>?> GetData()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<object>>(
             "getData");

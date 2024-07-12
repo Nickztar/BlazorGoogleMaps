@@ -2,6 +2,7 @@
 using OneOf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -10,16 +11,14 @@ namespace GoogleMapsComponents;
 
 internal class JsObjectRef1 : IJsObjectRef
 {
-    protected Guid _guid;
+    private readonly Guid _guid;
+    public Guid Guid => _guid;
 
-    public Guid Guid
-    {
-        get { return _guid; }
-    }
+    public string GuidString => _guid.ToString();
 
-    public string GuidString
+    [JsonConstructor]
+    public JsObjectRef1(string guidString) : this(new Guid(guidString))
     {
-        get { return _guid.ToString(); }
     }
 
     public JsObjectRef1(Guid guid)
@@ -27,17 +26,9 @@ internal class JsObjectRef1 : IJsObjectRef
         _guid = guid;
     }
 
-    [JsonConstructor]
-    public JsObjectRef1(string guidString)
-    {
-        _guid = new Guid(guidString);
-    }
-
     public override bool Equals(object? obj)
     {
-        var other = obj as JsObjectRef;
-
-        if (other == null)
+        if (obj is not JsObjectRef other)
         {
             return false;
         }
@@ -55,18 +46,12 @@ internal class JsObjectRef1 : IJsObjectRef
 
 public class JsObjectRef : IJsObjectRef, IDisposable
 {
-    protected readonly Guid _guid;
-    protected readonly IJSRuntime _jsRuntime;
+    private readonly Guid _guid;
+    private readonly IJSRuntime _jsRuntime;
 
-    public Guid Guid
-    {
-        get { return _guid; }
-    }
+    public Guid Guid => _guid;
 
-    public IJSRuntime JSRuntime
-    {
-        get { return _jsRuntime; }
-    }
+    public IJSRuntime JSRuntime => _jsRuntime;
 
     public JsObjectRef(
         IJSRuntime jsRuntime,
@@ -89,7 +74,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         string constructorFunctionName,
         Dictionary<string, object> args)
     {
-        var internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
+        var internalMapping = args.ToDictionary(e => e.Key, _ => Guid.NewGuid());
         var dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
         var result = await CreateMultipleAsync(
             jsRuntime,
@@ -176,7 +161,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
-    public Task InvokeMultipleAsync(string functionName, Dictionary<Guid, object> dictArgs)
+    public Task InvokeMultipleAsync(string functionName, Dictionary<Guid, object?> dictArgs)
     {
         return _jsRuntime.MyInvokeAsync(
             "blazorGoogleMaps.objectManager.invokeMultiple",
@@ -184,7 +169,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
                 .Concat(dictArgs.Values).ToArray()
         );
     }
-
+    
     public Task AddMultipleListenersAsync(string eventName, Dictionary<Guid, object> dictArgs)
     {
         return _jsRuntime.MyAddListenerAsync(
@@ -203,7 +188,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
-    public Task<T> InvokeAsync<T>(string functionName, params object?[] args)
+    public Task<T?> InvokeAsync<[DynamicallyAccessedMembers(Helper.JsonSerialized)] T>(string functionName, params object?[] args)
     {
         return _jsRuntime.MyInvokeAsync<T>(
             "blazorGoogleMaps.objectManager.invoke",
@@ -212,7 +197,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
-    public Task<Dictionary<string, T>> InvokeMultipleAsync<T>(string functionName, Dictionary<Guid, object> dictArgs)
+    public Task<Dictionary<string, T>?> InvokeMultipleAsync<T>(string functionName, Dictionary<Guid, object> dictArgs)
     {
         return _jsRuntime.MyInvokeAsync<Dictionary<string, T>>(
             "blazorGoogleMaps.objectManager.invokeMultiple",
@@ -258,7 +243,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
-    public async Task<JsObjectRef> InvokeWithReturnedObjectRefAsync(string functionName, params object[] args)
+    public async Task<JsObjectRef?> InvokeWithReturnedObjectRefAsync(string functionName, params object[] args)
     {
         var guid = await _jsRuntime.MyInvokeAsync<string>(
             "blazorGoogleMaps.objectManager.invokeWithReturnedObjectRef",
@@ -266,7 +251,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
                 .Concat(args).ToArray()
         );
 
-        return new JsObjectRef(_jsRuntime, new Guid(guid));
+        return guid is null ? null : new JsObjectRef(_jsRuntime, new Guid(guid));
     }
 
     //public async Task<List<JsObjectRef>> InvokeMultipleWithReturnedObjectRefAsync(string functionName, string eventname, Dictionary<Guid, object> dictArgs)
@@ -280,7 +265,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
     //    return guids.Select(e => new JsObjectRef(_jsRuntime, new Guid(e))).ToList();
     //}
 
-    public Task<T> GetValue<T>(string propertyName)
+    public Task<T?> GetValue<[DynamicallyAccessedMembers(Helper.JsonSerialized)] T>(string propertyName)
     {
         return _jsRuntime.MyInvokeAsync<T>(
             "blazorGoogleMaps.objectManager.readObjectPropertyValue",
@@ -288,17 +273,17 @@ public class JsObjectRef : IJsObjectRef, IDisposable
             propertyName);
     }
 
-    public async Task<JsObjectRef> GetObjectReference(string propertyName)
+    public async Task<JsObjectRef?> GetObjectReference(string propertyName)
     {
         var guid = await _jsRuntime.MyInvokeAsync<string>(
             "blazorGoogleMaps.objectManager.readObjectPropertyValueWithReturnedObjectRef",
             _guid.ToString(),
             propertyName);
 
-        return new JsObjectRef(_jsRuntime, new Guid(guid));
+        return guid is null ? null : new JsObjectRef(_jsRuntime, new Guid(guid));
     }
 
-    public Task<T?> GetMappedValue<T>(string propertyName, params string[] mappedNames)
+    public Task<T?> GetMappedValue<[DynamicallyAccessedMembers(Helper.JsonSerialized)] T>(string propertyName, params string[] mappedNames)
     {
         return _jsRuntime.MyInvokeAsync<T>(
             "blazorGoogleMaps.objectManager.readObjectPropertyValueAndMapToArray",
@@ -306,11 +291,11 @@ public class JsObjectRef : IJsObjectRef, IDisposable
             propertyName, mappedNames);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is JsObjectRef other)
         {
-            return other.Guid == this.Guid;
+            return other.Guid == Guid;
         }
         else
         {

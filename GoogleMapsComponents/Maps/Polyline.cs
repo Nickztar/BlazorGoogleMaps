@@ -57,7 +57,7 @@ public class Polyline : ListableEntityBase<PolylineOptions>
     /// Retrieves the path.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<LatLngLiteral>> GetPath()
+    public Task<IEnumerable<LatLngLiteral>?> GetPath()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
     }

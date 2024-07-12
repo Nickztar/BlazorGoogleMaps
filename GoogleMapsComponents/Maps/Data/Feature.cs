@@ -11,8 +11,8 @@ namespace GoogleMapsComponents.Maps.Data;
 /// </summary>
 public class Feature : IJsObjectRef
 {
-    private readonly JsObjectRef _jsObjectRef;
-    public Guid Guid => _jsObjectRef.Guid;
+    private readonly JsObjectRef? _jsObjectRef;
+    public Guid Guid => _jsObjectRef!.Guid;
 
     /// <summary>
     /// Needed for json serializations
@@ -24,7 +24,7 @@ public class Feature : IJsObjectRef
 
     public Feature()
     {
-
+        // Not sure how to handle this case, _jsObjectRef, will be null here.
     }
 
     public IEnumerable<IDictionary<string, object>>? Properties { get; set; }
@@ -52,8 +52,9 @@ public class Feature : IJsObjectRef
     /// Returns the feature ID.
     /// </summary>
     /// <returns></returns>
-    public async Task<int> GetId()
+    public async Task<int?> GetId()
     {
+        if (_jsObjectRef is null) return null;
         var result = await _jsObjectRef.InvokeAsync<int>("getId");
         return result;
     }

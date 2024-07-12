@@ -23,7 +23,7 @@ public class MapOptions
     /// This color will be visible when tiles have not yet loaded as the user pans.<br/>
     /// This option can only be set when the map is initialized.
     /// </summary>
-    public string BackgroundColor { get; set; }
+    public string? BackgroundColor { get; set; }
 
     /// <summary>
     /// The initial Map center. Required.
@@ -58,7 +58,7 @@ public class MapOptions
     /// As with the css property, you must specify at least one fallback cursor that is not a URL.<br/>
     /// For example: <c>draggableCursor: 'url(http://www.example.com/icon.png), auto;'</c>.
     /// </summary>
-    public string DraggableCursor { get; set; }
+    public string? DraggableCursor { get; set; }
 
     /// <summary>
     /// The name or url of the cursor to display when the map is being dragged.<br/>
@@ -66,7 +66,7 @@ public class MapOptions
     /// As with the css property, you must specify at least one fallback cursor that is not a URL.<br/>
     /// For example: <c>draggingCursor: 'url(http://www.example.com/icon.png), auto;'</c>.
     /// </summary>
-    public string DraggingCursor { get; set; }
+    public string? DraggingCursor { get; set; }
 
     /// <summary>
     /// The enabled/disabled state of the Fullscreen control.
@@ -87,7 +87,7 @@ public class MapOptions
     /// <item><term>"auto"</term><description> (default) Gesture handling is either cooperative or greedy, depending on whether the page is scrollable or in an iframe.</description></item>
     /// </list>
     /// </summary>
-    public string GestureHandling { get; set; }
+    public string? GestureHandling { get; set; }
 
     /// <summary>
     /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North.<br/>
@@ -199,7 +199,7 @@ public class MapOptions
     /// Styles to apply to each of the default map types.<br/>
     /// Note that for satellite/hybrid and terrain modes, these styles will only apply to labels and geometry.
     /// </summary>
-    public MapTypeStyle[] Styles { get; set; }
+    public MapTypeStyle[]? Styles { get; set; }
 
     /// <summary>
     /// Controls the automatic switching behavior for the angle of incidence of the map.<br/>

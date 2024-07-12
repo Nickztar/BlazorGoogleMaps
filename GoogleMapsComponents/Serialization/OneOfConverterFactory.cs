@@ -1,11 +1,15 @@
 ﻿using OneOf;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Serialization;
 
+[SuppressMessage("Trimming", "IL2077:Target parameter argument does not satisfy \'DynamicallyAccessedMembersAttribute\' in call to target method. The source field does not have matching annotations.")]
+[SuppressMessage("Trimming", "IL2067:Target parameter argument does not satisfy \'DynamicallyAccessedMembersAttribute\' in call to target method. The parameter of method does not have matching annotations.")]
+[SuppressMessage("Trimming", "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code")]
 public class OneOfConverterFactory : JsonConverterFactory
 {
     public override bool CanConvert(Type typeToConvert)
@@ -92,15 +96,16 @@ public class OneOfConverterFactory : JsonConverterFactory
         return (null, null);
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "OneOfs are not trimmed.")]
     private static IOneOf CreateOneOf(JsonSerializerOptions options,
         int index,
         JsonDocument doc,
-        Type oneOfType,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicConstructors | DynamicallyAccessedMemberTypes.PublicConstructors)] Type oneOfType,
         Type[] types)
     {
         var args = new object[types.Length + 1];
         args[0] = index;
-        args[index + 1] = doc.Deserialize(types[index], options);
+        args[index + 1] = doc.Deserialize(types[index], options)!;
 
         var oneOf = Activator.CreateInstance(
             oneOfType,
@@ -110,7 +115,7 @@ public class OneOfConverterFactory : JsonConverterFactory
             null
         );
 
-        return (IOneOf)oneOf;
+        return (IOneOf)oneOf!;
     }
 
     private const string IndexKey = "$index";
@@ -138,7 +143,7 @@ public class OneOfConverterFactory : JsonConverterFactory
 
             var oneOf = CreateOneOf(options, index, doc, OneOfType, Types);
 
-            return (OneOf<T0, T1>)Activator.CreateInstance(typeToConvert, oneOf);
+            return (OneOf<T0, T1>)Activator.CreateInstance(typeToConvert, oneOf)!;
         }
 
         public override void Write(Utf8JsonWriter writer,
@@ -191,7 +196,7 @@ public class OneOfConverterFactory : JsonConverterFactory
 
             var oneOfBase = CreateOneOf(options, index, doc, OneOfType, Types);
 
-            return (OneOf<T0, T1, T2>)Activator.CreateInstance(typeToConvert, oneOfBase);
+            return (OneOf<T0, T1, T2>)Activator.CreateInstance(typeToConvert, oneOfBase)!;
         }
 
         public override void Write(Utf8JsonWriter writer,

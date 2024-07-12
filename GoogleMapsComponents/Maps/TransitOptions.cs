@@ -24,7 +24,7 @@ public class TransitOptions
     /// One or more preferred modes of transit, such as bus or train.<br/>
     /// If no preference is given, the API returns the default best route.
     /// </summary>
-    public IEnumerable<TransitMode> Modes { get; set; }
+    public IEnumerable<TransitMode>? Modes { get; set; }
 
     /// <summary>
     /// A preference that can bias the choice of transit route, such as less walking.<br/>

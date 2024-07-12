@@ -12,7 +12,7 @@ public class HeatmapLayerOptions
     /// <summary>
     /// The data points to display. Required.
     /// </summary>
-    public IEnumerable<LatLngLiteral> Data { get; set; }
+    public IEnumerable<LatLngLiteral> Data { get; set; } = [];
 
     /// <summary>
     /// Specifies whether heatmaps dissipate on zoom. By default, the radius of influence of a data point is specified by the radius option only. 
@@ -24,7 +24,7 @@ public class HeatmapLayerOptions
     /// The color gradient of the heatmap, specified as an array of CSS color strings. 
     /// All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public IEnumerable<string> Gradient { get; set; }
+    public IEnumerable<string> Gradient { get; set; } = [];
 
     /// <summary>
     /// The map on which to display the layer.

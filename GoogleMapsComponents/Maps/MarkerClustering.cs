@@ -84,10 +84,16 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     [Obsolete("Deprecated: Center map based on unclustered Markers before clustering. Latest js-markerclusterer lib doesn't support this. Workaround is slow. ")]
     public virtual async Task FitMapToMarkers(int padding)
     {
-        var newBounds = new LatLngBoundsLiteral(await _originalMarkers.First().GetPosition());
+        var firstMarker = _originalMarkers.FirstOrDefault();
+        if (firstMarker is null) return;
+        var firstPosition = await firstMarker.GetPosition();
+        if (firstPosition is null) return;
+        var newBounds = new LatLngBoundsLiteral();
         foreach (var marker in _originalMarkers)
         {
-            newBounds.Extend(await marker.GetPosition());
+            var position = await marker.GetPosition();
+            if (position is null) continue;
+            newBounds.Extend(position);
         }
 
         await _map.FitBounds(newBounds, padding);

@@ -10,7 +10,7 @@ public class MapTypeControlOptions
     /// <summary>
     /// IDs of map types to show in the control.
     /// </summary>
-    public MapTypeId[] MapTypeIds { get; set; }
+    public MapTypeId[] MapTypeIds { get; set; } = [];
 
     /// <summary>
     /// Position id. Used to specify the position of the control on the map.<br/>

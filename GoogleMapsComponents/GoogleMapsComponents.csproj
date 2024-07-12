@@ -25,11 +25,18 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DebugType>full</DebugType>
 		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<IsTrimmable>true</IsTrimmable>
+		<TrimMode>link</TrimMode>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	</PropertyGroup>
 
 	<ItemGroup>

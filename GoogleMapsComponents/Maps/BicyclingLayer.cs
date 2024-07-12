@@ -25,7 +25,7 @@ public class BicyclingLayer : EventEntityBase, IJsObjectRef
     {
     }
 
-    public virtual Task<Map> GetMap()
+    public virtual Task<Map?> GetMap()
     {
         return _jsObjectRef.InvokeAsync<Map>("getMap");
     }

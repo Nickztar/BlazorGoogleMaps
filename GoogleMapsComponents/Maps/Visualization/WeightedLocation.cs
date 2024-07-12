@@ -8,7 +8,7 @@ public class WeightedLocation
     /// <summary>
     /// The location of the data point.
     /// </summary>
-    public LatLngLiteral Location { get; set; }
+    public required LatLngLiteral Location { get; set; }
 
     /// <summary>
     /// The weighting value of the data point.

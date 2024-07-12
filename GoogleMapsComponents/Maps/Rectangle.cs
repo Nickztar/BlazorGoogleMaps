@@ -40,7 +40,7 @@ public class Rectangle : EventEntityBase, IDisposable
     /// Returns the bounds of this rectangle.
     /// </summary>
     /// <returns></returns>
-    public Task<LatLngBoundsLiteral> GetBounds()
+    public Task<LatLngBoundsLiteral?> GetBounds()
     {
         return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>(
             "getBounds");
@@ -70,7 +70,7 @@ public class Rectangle : EventEntityBase, IDisposable
     /// Returns the map on which this rectangle is displayed.
     /// </summary>
     /// <returns></returns>
-    public Map GetMap()
+    public Map? GetMap()
     {
         return _map;
     }

@@ -1,24 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension;
 
-public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposable, IAsyncDisposable
+public class ListableEntityListBase<[DynamicallyAccessedMembers(Helper.JsonSerialized)] TEntityBase, TEntityOptionsBase> : IDisposable, IAsyncDisposable
     where TEntityBase : ListableEntityBase<TEntityOptionsBase>
     where TEntityOptionsBase : ListableEntityOptionsBase
 {
     protected readonly JsObjectRef _jsObjectRef;
 
     public readonly Dictionary<string, TEntityBase> BaseListableEntities;
+    private readonly Func<JsObjectRef, TEntityBase> _builder;
     private bool _isDisposed;
 
-    protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
+    protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities, Func<JsObjectRef, TEntityBase> entityBuilder)
     {
         _jsObjectRef = jsObjectRef;
         BaseListableEntities = baseListableEntities;
+        _builder = entityBuilder;
     }
 
     /// <summary>
@@ -63,9 +66,9 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public class EntityMouseEvent
     {
-        public MouseEvent MouseEvent { get; set; }
-        public string Key { get; set; }
-        public TEntityBase Entity { get; set; }
+        public required MouseEvent MouseEvent { get; set; }
+        public required string Key { get; set; }
+        public required TEntityBase Entity { get; set; }
     }
 
     /// <summary>
@@ -75,14 +78,11 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// Adding handlers to the event will slow down adding entities by a small amount.
     /// If no handler is added, performance is not impaired.
     /// </summary>
-    public event EventHandler<EntityMouseEvent> EntityClicked;
+    public event EventHandler<EntityMouseEvent>? EntityClicked;
 
     private void FireEvent<TEvent>(EventHandler<TEvent>? eventHandler, TEvent ea)
     {
-        if (eventHandler != null)
-        {
-            eventHandler(this, ea);
-        }
+        eventHandler?.Invoke(this, ea);
     }
 
     /// <summary>
@@ -99,16 +99,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
                 googleMapListableEntityTypeName,
                 opts.ToDictionary(e => e.Key, e => (object)e.Value));
 
-            Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e =>
-            {
-                //Alternate if there are more constructors
-                //var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(c => !c.GetParameters().Any());
-                var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
-                //BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                return (TEntityBase)ctor.Invoke(new object[] { e.Value });
-                //Old version which didnt catched internal consturctors
-                //return Activator.CreateInstance(typeof(TEntityBase), flags, null, e.Value) as TEntityBase;
-            });
+            Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e => _builder.Invoke(e.Value));
 
             //Someone can try to create element yet inside listable entities... really not the best approach... but manage it
             List<string> alreadyCreated = BaseListableEntities.Keys.Intersect(objs.Select(e => e.Key)).ToList();
@@ -141,9 +132,9 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// </summary>
     /// <param name="filterKeys"></param>
     /// <returns></returns>
-    public virtual async Task RemoveMultipleAsync(List<string> filterKeys = null)
+    public virtual async Task RemoveMultipleAsync(List<string>? filterKeys = null)
     {
-        if ((filterKeys != null) && (filterKeys.Count > 0))
+        if (filterKeys is { Count: > 0 })
         {
             List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
             if (foundKeys.Count > 0)
@@ -155,7 +146,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
                 {
                     //Marker object needs to dispose call due to previous DisposeMultipleAsync call
                     //Probably superfluous, but Garbage Collector may appreciate it... 
-                    BaseListableEntities[key] = null;
+                    // BaseListableEntities[key] = null;
                     BaseListableEntities.Remove(key);
                 }
             }
@@ -176,7 +167,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
                 {
                     //Listable entities object needs to dispose call due to previous DisposeMultipleAsync call
                     //Probably superfluous, but Garbage Collector may appreciate it... 
-                    BaseListableEntities[key] = null;
+                    // BaseListableEntities[key] = null;
                     BaseListableEntities.Remove(key);
                 }
             }
@@ -241,64 +232,42 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public virtual Task<Dictionary<string, Map>> GetMaps(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<Map>(
-                    "getMap",
-                    dictArgs)
-                .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<Map>();
-        }
+        return GetKeysAsync<Map, Map>("getMap", r => r, filterKeys);
     }
 
     public virtual Task<Dictionary<string, bool>> GetDraggables(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<bool>(
-                    "getDraggable",
-                    dictArgs)
-                .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<bool>();
-        }
+        return GetKeysAsync<bool, bool>("getDraggable", r => r, filterKeys);
     }
 
     public virtual Task<Dictionary<string, bool>> GetVisibles(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<bool>(
-                    "getVisible",
-                    dictArgs)
-                .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<bool>();
-        }
+        return GetKeysAsync<bool, bool>("getVisible", r => r, filterKeys);
     }
 
+    internal async Task<Dictionary<string, TRes>> GetKeysAsync<TValue, TRes>(string functionName, Func<TValue, TRes> valueConverter, List<string>? keys = null)
+    {
+        var matchingKeys = ComputeMatchingKeys(keys);
+
+        if (!matchingKeys.Any()) return await ComputeEmptyResult<TRes>();
+        
+        var internalMapping = ComputeInternalMapping(matchingKeys);
+        var dictArgs = ComputeDictArgs(matchingKeys);
+
+        var result = await _jsObjectRef.InvokeMultipleAsync<TValue>(
+            functionName,
+            dictArgs);
+        if (result is null) return await ComputeEmptyResult<TRes>();
+        return result.ToDictionary(r => 
+            internalMapping[new Guid(r.Key)], 
+            r => valueConverter.Invoke(r.Value)
+        );
+    }
+    
+    public virtual Dictionary<Guid, object?> ToJsDictionary<TValue>(Dictionary<string, TValue> dictionary)
+    {
+        return dictionary.ToDictionary(x => BaseListableEntities[x.Key].Guid, x => (object?)x.Value);
+    }
     /// <summary>
     /// Renders the listable entity on the specified map or panorama. 
     /// If map is set to null, the marker will be removed.
@@ -307,39 +276,35 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     public virtual async Task SetMaps(Dictionary<string, Map>? maps)
     {
         maps ??= new Dictionary<string, Map>();
-        Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
         await _jsObjectRef.InvokeMultipleAsync(
             "setMap",
-            dictArgs);
+            ToJsDictionary(maps));
     }
 
     public virtual Task SetDraggables(Dictionary<string, bool> draggables)
     {
-        Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setDraggable",
-            dictArgs);
+            ToJsDictionary(draggables));
     }
 
     public virtual Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
     {
-        Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setOptions",
-            dictArgs);
+            ToJsDictionary(options));
     }
 
     public virtual Task SetVisibles(Dictionary<string, bool> visibles)
     {
-        Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setVisible",
-            dictArgs);
+            ToJsDictionary(visibles));
     }
 
     public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V, string> handler)
     {
-        Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e) =>
+        var dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e) =>
         {
             handler(e, key);
         }));
@@ -369,7 +334,6 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     protected virtual void Dispose(bool disposing)
     {
-
         if (!_isDisposed)
         {
             if (disposing)

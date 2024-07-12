@@ -11,7 +11,7 @@ public class DirectionsRendererOptions
     /// <summary>
     /// The directions to display on the map and/or in a <div> panel, retrieved as a DirectionsResult object from DirectionsService.
     /// </summary>
-    public DirectionsResult Directions { get; set; }
+    public DirectionsResult? Directions { get; set; }
 
     /// <summary>
     /// If true, allows the user to drag and modify the paths of routes rendered by this DirectionsRenderer.
@@ -26,18 +26,18 @@ public class DirectionsRendererOptions
     /// <summary>
     /// The InfoWindow in which to render text information when a marker is clicked. Existing info window content will be overwritten and its position moved. If no info window is specified, the DirectionsRenderer will create and use its own info window. This property will be ignored if suppressInfoWindows is set to true.
     /// </summary>
-    public InfoWindow InfoWindow { get; set; }
+    public InfoWindow? InfoWindow { get; set; }
 
     /// <summary>
     /// Map on which to display the directions.
     /// </summary>
     [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public Map Map { get; set; }
+    public Map? Map { get; set; }
 
     /// <summary>
     /// Options for the markers. All markers rendered by the DirectionsRenderer will use these options.
     /// </summary>
-    public MarkerOptions MarkerOptions { get; set; }
+    public MarkerOptions? MarkerOptions { get; set; }
 
     //TODO Figure out what a "Node" type is.
     /// <summary>
@@ -48,7 +48,7 @@ public class DirectionsRendererOptions
     /// <summary>
     /// Options for the polylines. All polylines rendered by the DirectionsRenderer will use these options.
     /// </summary>
-    public PolylineOptions PolylineOptions { get; set; }
+    public PolylineOptions? PolylineOptions { get; set; }
 
     /// <summary>
     /// By default, the input map is centered and zoomed to the bounding box of this set of directions. If this option is set to true, the viewport is left unchanged, unless the map's center and zoom were never set.

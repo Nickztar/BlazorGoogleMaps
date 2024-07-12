@@ -38,7 +38,7 @@ public class Geocoder : IDisposable
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<GeocoderResponse> Geocode(GeocoderRequest request)
+    public async Task<GeocoderResponse?> Geocode(GeocoderRequest request)
     {
         return await _jsObjectRef.InvokeAsync<GeocoderResponse>("geocode", request);
     }

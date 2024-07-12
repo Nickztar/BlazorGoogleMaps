@@ -8,20 +8,20 @@ public class SetPropertyEvent
     /// <summary>
     /// The feature whose property was set.
     /// </summary>
-    public Feature Feature { get; set; }
+    public Feature Feature { get; set; } = default!;
 
     /// <summary>
     /// The property name.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     /// The new value.
     /// </summary>
-    public object NewValue { get; set; }
+    public object NewValue { get; set; } = default!;
 
     /// <summary>
     /// The previous value. Will be undefined if the property was added.
     /// </summary>
-    public object OldValue { get; set; }
+    public object? OldValue { get; set; }
 }

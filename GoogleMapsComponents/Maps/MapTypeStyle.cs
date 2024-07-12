@@ -54,7 +54,7 @@ public abstract class GoogleMapStyleElement
 
 public class GoogleMapStyleColor : GoogleMapStyleElement
 {
-    public string color { get; set; }
+    public string? color { get; set; }
 
     public static explicit operator GoogleMapStyleColor(string textColor)
     {
@@ -66,7 +66,7 @@ public class GoogleMapStyleColor : GoogleMapStyleElement
     
 public class GoogleMapStyleHue : GoogleMapStyleElement
 {
-    public string hue { get; set; }
+    public string? hue { get; set; }
 
     public static explicit operator GoogleMapStyleHue(string hueColor)
     {
@@ -78,7 +78,7 @@ public class GoogleMapStyleHue : GoogleMapStyleElement
 
 public class GoogleMapStyleVisibility : GoogleMapStyleElement
 {
-    public string visibility { get; set; }
+    public string? visibility { get; set; }
 
     public static explicit operator GoogleMapStyleVisibility(bool isVisible)
     {

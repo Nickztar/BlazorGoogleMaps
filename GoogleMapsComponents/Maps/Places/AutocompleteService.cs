@@ -26,7 +26,7 @@ public class AutocompleteService : IDisposable
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<AutocompleteResponse> GetPlacePredictions(AutocompletionRequest request)
+    public async Task<AutocompleteResponse?> GetPlacePredictions(AutocompletionRequest request)
     {
         return await _jsObjectRef.InvokeAsync<AutocompleteResponse>("getPlacePredictions", request);
     }
@@ -36,7 +36,7 @@ public class AutocompleteService : IDisposable
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<QueryAutocompleteResponse> GetQueryPredictions(QueryAutocompletionRequest request)
+    public async Task<QueryAutocompleteResponse?> GetQueryPredictions(QueryAutocompletionRequest request)
     {
         return await _jsObjectRef.InvokeAsync<QueryAutocompleteResponse>("getQueryPredictions", request);
     }

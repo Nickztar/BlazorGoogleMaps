@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using OneOf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -15,6 +16,7 @@ namespace GoogleMapsComponents;
 
 internal static class Helper
 {
+    public const DynamicallyAccessedMemberTypes JsonSerialized = DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties;
     private static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -35,7 +37,7 @@ internal static class Helper
         return jsRuntime.MyInvokeAsync<object>(identifier, args);
     }
 
-    internal static T? ToNullableEnum<T>(string? str)
+    internal static T? ToNullableEnum<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)] T>(string? str)
         where T : struct
     {
         var enumType = typeof(T);
@@ -52,7 +54,9 @@ internal static class Helper
 
         foreach (var name in Enum.GetNames(enumType))
         {
-            var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+            var field = enumType.GetField(name);
+            if (field is null) continue;
+            var enumMemberAttribute = ((EnumMemberAttribute[])field.GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
             if (enumMemberAttribute.Value == str)
             {
                 return (T)Enum.Parse(enumType, name);
@@ -63,12 +67,14 @@ internal static class Helper
         return default;
     }
 
+    [RequiresUnreferencedCode("JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved.")]
     public static object? DeSerializeObject(JsonElement json, Type type)
     {
         var obj = json.Deserialize(type, Options);
         return obj;
     }
 
+    [RequiresUnreferencedCode("JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved.")]
     public static object? DeSerializeObject(string? json, Type type)
     {
         if (json == null)
@@ -80,6 +86,7 @@ internal static class Helper
         return obj;
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Types are referenced")]
     public static TObject? DeSerializeObject<TObject>(string? json)
     {
         if (json == null)
@@ -91,13 +98,14 @@ internal static class Helper
         return value;
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Types are referenced")]
     public static string SerializeObject(object obj)
     {
         var value = JsonSerializer.Serialize(obj, Options);
         return value;
     }
 
-    private static IEnumerable<object> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object?> args)
+    private static IEnumerable<object?> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object?> args)
     {
         var jsFriendlyArgs = args
             .Select(arg =>
@@ -106,7 +114,6 @@ internal static class Helper
                 {
                     return arg;
                 }
-
                 if (arg is IOneOf oneof)
                 {
                     arg = oneof.Value;
@@ -195,7 +202,7 @@ internal static class Helper
         return null;
     }
 
-    internal static async Task<TRes?> MyInvokeAsync<TRes>(
+    internal static async Task<TRes?> MyInvokeAsync<[DynamicallyAccessedMembers(JsonSerialized)] TRes>(
         this IJSRuntime jsRuntime,
         string identifier,
         params object?[] args)
@@ -212,35 +219,30 @@ internal static class Helper
         if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
         {
             var resultObject = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
-            object? result = null;
+            object? result;
 
-            if (resultObject is string someText)
+            try
             {
-                try
+                var jo = JsonDocument.Parse(resultObject);
+                var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
+                if (typeToken != null)
                 {
-                    var jo = JsonDocument.Parse(someText);
-                    var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
-                    if (typeToken != null)
-                    {
-                        result = DeSerializeObject<TRes>(typeToken);
-                    }
-                    else
-                    {
-                        result = someText;
-                    }
+                    result = DeSerializeObject<TRes>(typeToken);
                 }
-                catch
+                else
                 {
-                    result = someText;
+                    result = resultObject;
                 }
+            }
+            catch
+            {
+                result = resultObject;
             }
 
             return (TRes?)result;
         }
-        else
-        {
-            return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
-        }
+
+        return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
     }
 
     internal static async Task<object> MyAddListenerAsync(
@@ -262,6 +264,7 @@ internal static class Helper
     /// <param name="identifier"></param>
     /// <param name="args"></param>
     /// <returns>Discriminated union of specified types</returns>
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Types should be referenced by the user, who is creating these?")]
     internal static async Task<OneOf<T, U>> MyInvokeAsync<T, U>(
         this IJSRuntime jsRuntime,
         string identifier,
@@ -299,25 +302,24 @@ internal static class Helper
                 json = jsonElement.GetString();
             }
 
-            var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+            var propArray = DeSerializeObject<Dictionary<string, object>>(json);
             if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
+                if (typeNameString is null) return default;
                 var type = asm.GetType(typeNameString);
+                if (type is null) return default;
                 result = Helper.DeSerializeObject(json, type);
             }
         }
 
-        switch (result)
+        return result switch
         {
-            case T t:
-                return t;
-            case U u:
-                return u;
-            default:
-                return default;
-        }
+            T t => t,
+            U u => u,
+            _ => default
+        };
     }
 
     /// <summary>
@@ -330,6 +332,7 @@ internal static class Helper
     /// <param name="identifier"></param>
     /// <param name="args"></param>
     /// <returns>Discriminated union of specified types</returns>
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Types should be referenced by the user, who is creating these?")]
     internal static async Task<OneOf<T, U, V>> MyInvokeAsync<T, U, V>(
         this IJSRuntime jsRuntime,
         string identifier,
@@ -346,7 +349,9 @@ internal static class Helper
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
+                if (typeNameString is null) return default;
                 var type = asm.GetType(typeNameString);
+                if (type is null) return default;
                 result = Helper.DeSerializeObject(json, type);
             }
         }
@@ -364,12 +369,14 @@ internal static class Helper
         }
     }
 
-    internal static T? ToEnum<T>(string str)
+    internal static T? ToEnum<[DynamicallyAccessedMembers(JsonSerialized)] T>(string? str)
     {
         var enumType = typeof(T);
         foreach (var name in Enum.GetNames(enumType))
         {
-            var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+            var field = enumType.GetField(name);
+            if (field == null) continue;
+            var enumMemberAttribute = ((EnumMemberAttribute[])field.GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
             if (enumMemberAttribute.Value == str)
             {
                 return (T)Enum.Parse(enumType, name);

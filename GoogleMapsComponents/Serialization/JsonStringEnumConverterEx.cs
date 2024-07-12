@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -11,8 +12,14 @@ namespace GoogleMapsComponents.Serialization;
 /// TODO apply to all enum with EnumMember attribute
 /// </summary>
 /// <typeparam name="TEnum"></typeparam>
-public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+public class JsonStringEnumConverterEx<[DynamicallyAccessedMembers(GetMember)] TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
+    private const DynamicallyAccessedMemberTypes GetMember = DynamicallyAccessedMemberTypes.PublicFields |
+                                                             DynamicallyAccessedMemberTypes.PublicMethods |
+                                                             DynamicallyAccessedMemberTypes.PublicEvents |
+                                                             DynamicallyAccessedMemberTypes.PublicProperties |
+                                                             DynamicallyAccessedMemberTypes.PublicConstructors |
+                                                             DynamicallyAccessedMemberTypes.PublicNestedTypes;
     private readonly Dictionary<TEnum, string> _enumToString = new Dictionary<TEnum, string>();
     private readonly Dictionary<string, TEnum> _stringToEnum = new Dictionary<string, TEnum>();
 

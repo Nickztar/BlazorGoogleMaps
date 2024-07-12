@@ -39,7 +39,7 @@ public class KmlLayer : EventEntityBase, IJsObjectRef
     /// Get the metadata associated with this layer, as specified in the layer markup.
     /// </summary>
     /// <returns>Metadata for a single KML layer</returns>
-    public Task<KmlLayerMetadata> GetMetadata()
+    public Task<KmlLayerMetadata?> GetMetadata()
     {
         return _jsObjectRef.InvokeAsync<KmlLayerMetadata>("getMetadata");
     }
@@ -48,7 +48,7 @@ public class KmlLayer : EventEntityBase, IJsObjectRef
     /// Get the status of the layer, set once the requested document has loaded.
     /// </summary>
     /// <returns>KmlLayerStatus constant, see constant for more info</returns>
-    public Task<string> GetStatus()
+    public Task<string?> GetStatus()
     {
         return _jsObjectRef.InvokeAsync<string>("getStatus");
     }
@@ -57,7 +57,7 @@ public class KmlLayer : EventEntityBase, IJsObjectRef
     /// Get the default viewport for the layer being displayed.
     /// </summary>
     /// <returns>LatLngBounds for the layer</returns>
-    public Task<LatLngBounds> GetDefaultViewport()
+    public Task<LatLngBounds?> GetDefaultViewport()
     {
         return _jsObjectRef.InvokeAsync<LatLngBounds>("getDefaultViewport");
     }
@@ -66,7 +66,7 @@ public class KmlLayer : EventEntityBase, IJsObjectRef
     /// Gets the URL of the KML file being displayed.
     /// </summary>
     /// <returns>Url</returns>
-    public Task<string> GetUrl()
+    public Task<string?> GetUrl()
     {
         return _jsObjectRef.InvokeAsync<string>("getUrl");
     }

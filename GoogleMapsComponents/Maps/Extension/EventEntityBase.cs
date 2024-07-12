@@ -27,42 +27,48 @@ public abstract class EventEntityBase : IDisposable
         EventListeners = new Dictionary<string, List<MapEventListener>>();
     }
 
-    public async Task<MapEventListener> AddListener(string eventName, Action handler)
+    public async Task<MapEventListener?> AddListener(string eventName, Action handler)
     {
         var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
             "addListener", eventName, handler);
 
+        if (listenerRef is null) return null;
+        
         var eventListener = new MapEventListener(listenerRef);
         AddEvent(eventName, eventListener);
         return eventListener;
     }
 
-    public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+    public async Task<MapEventListener?> AddListener<T>(string eventName, Action<T> handler)
     {
         var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
             "addListener", eventName, handler);
 
+        if (listenerRef is null) return null;
         var eventListener = new MapEventListener(listenerRef);
         AddEvent(eventName, eventListener);
         return eventListener;
     }
 
     //Note: Might want to wrap the handler with our own handler to make sure that we dispose the event after trigger?
-    public async Task<MapEventListener> AddListenerOnce(string eventName, Action handler)
+    public async Task<MapEventListener?> AddListenerOnce(string eventName, Action handler)
     {
         var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
             "addListenerOnce", eventName, handler);
 
+        if (listenerRef is null) return null;
+        
         var eventListener = new MapEventListener(listenerRef);
         AddEvent(eventName, eventListener);
         return eventListener;
     }
 
-    public async Task<MapEventListener> AddListenerOnce<T>(string eventName, Action<T> handler)
+    public async Task<MapEventListener?> AddListenerOnce<T>(string eventName, Action<T> handler)
     {
         var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
             "addListenerOnce", eventName, handler);
 
+        if (listenerRef is null) return null;
         var eventListener = new MapEventListener(listenerRef);
         AddEvent(eventName, eventListener);
         return eventListener;

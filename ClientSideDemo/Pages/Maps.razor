@@ -71,6 +71,7 @@
     private async Task SyncMapCenter()
     {
         var latLng = await _map1.GetCenter();
+        if (latLng is null) return;
         await _map2.SetCenter(latLng);
     }
 

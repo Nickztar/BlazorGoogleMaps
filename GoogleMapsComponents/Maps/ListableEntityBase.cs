@@ -1,6 +1,7 @@
 ﻿using GoogleMapsComponents.Maps.Extension;
 using OneOf;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
@@ -14,7 +15,7 @@ public class ListableEntityBase<TEntityOptions> : EventEntityBase, IJsObjectRef
     {
     }
 
-    public virtual Task<Map> GetMap()
+    public virtual Task<Map?> GetMap()
     {
         return _jsObjectRef.InvokeAsync<Map>("getMap");
     }
@@ -34,7 +35,7 @@ public class ListableEntityBase<TEntityOptions> : EventEntityBase, IJsObjectRef
         return _jsObjectRef.InvokeAsync(functionName, args);
     }
 
-    public Task<T> InvokeAsync<T>(string functionName, params object[] args)
+    public Task<T?> InvokeAsync<[DynamicallyAccessedMembers(Helper.JsonSerialized)] T>(string functionName, params object[] args)
     {
         return _jsObjectRef.InvokeAsync<T>(functionName, args);
     }

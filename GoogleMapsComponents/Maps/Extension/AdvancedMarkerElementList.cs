@@ -84,7 +84,7 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<AdvancedMarkerElementList> SyncAsync(AdvancedMarkerElementList? list,
+    public static async Task<AdvancedMarkerElementList?> SyncAsync(AdvancedMarkerElementList? list,
         IJSRuntime jsRuntime,
         Dictionary<string, AdvancedMarkerElementOptions> opts,
         Action<MouseEvent, string, AdvancedMarkerElement>? clickCallback = null)
@@ -101,7 +101,7 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         {
             if (list == null)
             {
-                list = await AdvancedMarkerElementList.CreateAsync(jsRuntime, new Dictionary<string, AdvancedMarkerElementOptions>());
+                list = await CreateAsync(jsRuntime, new Dictionary<string, AdvancedMarkerElementOptions>());
                 if (clickCallback != null)
                 {
                     list.EntityClicked += (_, e) =>
@@ -116,7 +116,7 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     }
 
     private AdvancedMarkerElementList(JsObjectRef jsObjectRef, Dictionary<string, AdvancedMarkerElement> markers)
-        : base(jsObjectRef, markers)
+        : base(jsObjectRef, markers, js => new AdvancedMarkerElement(js))
     {
     }
 
@@ -141,173 +141,47 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
 
     public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<string>(
-                "getAnimation",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => Helper.ToEnum<Animation>(r.Value)));
-        }
-        else
-        {
-            return ComputeEmptyResult<Animation>();
-        }
+        return GetKeysAsync<string, Animation>("getAnimation", Helper.ToEnum<Animation>, filterKeys);
     }
 
     public Task<Dictionary<string, bool>> GetClickables(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<bool>(
-                "getClickable",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<bool>();
-        }
+        return GetKeysAsync<bool, bool>("getClickable", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, string>> GetCursors(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<string>(
-                "getCursor",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<string>();
-        }
+        return GetKeysAsync<string, string>("getCursor", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<OneOf<string, Icon, Symbol>>(
-                "getIcon",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<OneOf<string, Icon, Symbol>>();
-        }
+        return GetKeysAsync<OneOf<string, Icon, Symbol>, OneOf<string, Icon, Symbol>>("getIcon", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, string>> GetLabels(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<string>(
-                "getLabel",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<string>();
-        }
+        return GetKeysAsync<string, string>("getLabel", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
-                "getPosition",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<LatLngLiteral>();
-        }
+        return GetKeysAsync<LatLngLiteral, LatLngLiteral>("getPosition", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, MarkerShape>> GetShapes(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<MarkerShape>(
-                "getShape",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<MarkerShape>();
-        }
+        return GetKeysAsync<MarkerShape, MarkerShape>("getShape", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, string>> GetTitles(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<string>(
-                "getTitle",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<string>();
-        }
+        return GetKeysAsync<string, string>("getTitle", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, int>> GetZIndexes(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<int>(
-                "getZIndex",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<int>();
-        }
+        return GetKeysAsync<int, int>("getZIndex", r => r, filterKeys);
     }
 
     /// <summary>
@@ -341,14 +215,12 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     /// <returns></returns>
     public Task SetClickables(Dictionary<string, bool> flags)
     {
-        var dictArgs = flags.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setClickable", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setClickable", ToJsDictionary(flags));
     }
 
     public Task SetCursors(Dictionary<string, string> cursors)
     {
-        var dictArgs = cursors.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setCursor", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setCursor", ToJsDictionary(cursors));
     }
 
     /// <summary>
@@ -358,24 +230,21 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     /// <returns></returns>
     public Task SetIcons(Dictionary<string, OneOf<string, Icon, Symbol>> icons)
     {
-        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setIcon",
-            dictArgs);
+            ToJsDictionary(icons));
     }
 
     /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
     public Task SetIcons(Dictionary<string, string> icons)
     {
-        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setIcon", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setIcon", ToJsDictionary(icons));
     }
 
     /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
     public Task SetIcons(Dictionary<string, Icon> icons)
     {
-        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setIcon", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setIcon", ToJsDictionary(icons));
     }
 
     /// <summary>
@@ -385,59 +254,51 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     /// <returns></returns>
     public Task SetLabels(Dictionary<string, OneOf<string, MarkerLabel>> labels)
     {
-        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
-            dictArgs);
+            ToJsDictionary(labels));
     }
 
     /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
     public Task SetLabels(Dictionary<string, string> labels)
     {
-        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
-            dictArgs);
+            ToJsDictionary(labels));
     }
 
     /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
     public Task SetLabels(Dictionary<string, MarkerLabel> labels)
     {
-        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
-            dictArgs);
+            ToJsDictionary(labels));
     }
 
     public Task SetOpacities(Dictionary<string, float> opacities)
     {
-        var dictArgs = opacities.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setOpacity",
-            dictArgs);
+            ToJsDictionary(opacities));
     }
 
     public Task SetPositions(Dictionary<string, LatLngLiteral> latLngs)
     {
-        var dictArgs = latLngs.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setPosition", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setPosition", ToJsDictionary(latLngs));
     }
 
     public Task SetShapes(Dictionary<string, MarkerShape> shapes)
     {
-        var dictArgs = shapes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setShape", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setShape", ToJsDictionary(shapes));
     }
 
     public Task SetTitles(Dictionary<string, string> titles)
     {
-        var dictArgs = titles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setTitle", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setTitle", ToJsDictionary(titles));
     }
 
     public Task SetZIndexes(Dictionary<string, int> zIndexes)
     {
-        var dictArgs = zIndexes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync("setZIndex", dictArgs);
+        return _jsObjectRef.InvokeMultipleAsync("setZIndex", ToJsDictionary(zIndexes));
     }
 }

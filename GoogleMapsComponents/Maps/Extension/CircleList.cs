@@ -51,24 +51,22 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<CircleList> SyncAsync(CircleList? list,
+    public static async Task<CircleList?> SyncAsync(CircleList? list,
         IJSRuntime jsRuntime,
         Dictionary<string, CircleOptions> opts,
         Action<MouseEvent, string, Circle>? clickCallback = null)
     {
         if (opts.Count == 0)
         {
-            if (list != null)
-            {
-                await list.SetMultipleAsync(opts);
-                list = null;
-            }
+            if (list == null) return list;
+            await list.SetMultipleAsync(opts);
+            list = null;
         }
         else
         {
             if (list == null)
             {
-                list = await CircleList.CreateAsync(jsRuntime, new Dictionary<string, CircleOptions>());
+                list = await CreateAsync(jsRuntime, new Dictionary<string, CircleOptions>());
                 if (clickCallback != null)
                 {
                     list.EntityClicked += (_, e) =>
@@ -84,7 +82,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
     }
 
     private CircleList(JsObjectRef jsObjectRef, Dictionary<string, Circle> circles)
-        : base(jsObjectRef, circles)
+        : base(jsObjectRef, circles, js => new Circle(js))
     {
     }
 
@@ -110,101 +108,42 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 
     public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<LatLngBoundsLiteral>(
-                "getBounds",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<LatLngBoundsLiteral>();
-        }
+        return GetKeysAsync<LatLngBoundsLiteral, LatLngBoundsLiteral>("getBounds", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
-                "getCenter",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<LatLngLiteral>();
-        }
+        return GetKeysAsync<LatLngLiteral, LatLngLiteral>("getCenter", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, bool>> GetEditables(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<bool>(
-                "getEditable",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<bool>();
-        }
+        return GetKeysAsync<bool, bool>("getEditable", r => r, filterKeys);
     }
 
     public Task<Dictionary<string, double>> GetRadiuses(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<double>(
-                "getRadius",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<double>();
-        }
+        return GetKeysAsync<double, double>("getRadius", r => r, filterKeys);
     }
 
     public Task SetCenters(Dictionary<string, LatLngLiteral> centers)
     {
-        var dictArgs = centers.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setCenter",
-            dictArgs);
+            ToJsDictionary(centers));
     }
 
     public Task SetEditables(Dictionary<string, bool> editables)
     {
-        var dictArgs = editables.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setEditable",
-            dictArgs);
+            ToJsDictionary(editables));
     }
 
     public Task SetRadiuses(Dictionary<string, double> radiuses)
     {
-        var dictArgs = radiuses.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setRadius",
-            dictArgs);
+            ToJsDictionary(radiuses));
     }
 }

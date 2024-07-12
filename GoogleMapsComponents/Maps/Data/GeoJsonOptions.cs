@@ -9,5 +9,5 @@ public class GeoJsonOptions
     /// The name of the Feature property to use as the feature ID. 
     /// If not specified, the GeoJSON Feature id will be used.
     /// </summary>
-    public string IdPropertyName { get; set; }
+    public string? IdPropertyName { get; set; }
 }

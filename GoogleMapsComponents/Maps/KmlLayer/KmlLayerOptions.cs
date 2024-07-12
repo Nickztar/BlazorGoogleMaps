@@ -30,7 +30,7 @@ public class KmlLayerOptions
     /// Map on which to display the Entity.
     /// </summary>
     [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public Map Map { get; set; }
+    public Map? Map { get; set; }
 
     /// <summary>
     /// All entities are displayed on the map in order of their zIndex, with higher values displaying in front of entities with lower values. 

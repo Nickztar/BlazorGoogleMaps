@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps;
 
 public class DirectionsRenderer : EventEntityBase, IDisposable
 {
-    public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)
+    public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions? opts = null)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsRenderer", opts);
         var obj = new DirectionsRenderer(jsObjectRef);
@@ -48,7 +48,7 @@ public class DirectionsRenderer : EventEntityBase, IDisposable
 
     }
 
-    public Task<Map> GetMap()
+    public Task<Map?> GetMap()
     {
         return _jsObjectRef.InvokeAsync<Map>(
             "getMap");
@@ -72,7 +72,7 @@ public class DirectionsRenderer : EventEntityBase, IDisposable
     /// </summary>
     /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
     /// <returns></returns>
-    public async Task<DirectionsResult> GetDirections(DirectionsRequestOptions directionsRequestOptions = null)
+    public async Task<DirectionsResult?> GetDirections(DirectionsRequestOptions? directionsRequestOptions = null)
     {
         if (directionsRequestOptions == null)
         {

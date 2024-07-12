@@ -26,7 +26,8 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         base.OnInitialized();
     }
 
-    public Map InteropObject { get; private set; } = default!;
+    private Map? _interopObject { get; set; }
+    public Map InteropObject => _interopObject ?? default!;
 
     public async Task InitAsync(ElementReference element, MapOptions? options = null)
     {
@@ -37,7 +38,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
             options.ApiLoadOptions = await _keyService.GetApiOptions();
         }
 
-        InteropObject = await Map.CreateAsync(JsRuntime, element, options);
+        _interopObject = await Map.CreateAsync(JsRuntime, element, options);
     }
 
     public async ValueTask DisposeAsync()
@@ -54,12 +55,12 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-        if (InteropObject is not null)
+        if (_interopObject is not null)
         {
             try
             {
                 await InteropObject.DisposeAsync();
-                InteropObject = null;
+                _interopObject = null;
             }
             catch (Exception ex)
             {

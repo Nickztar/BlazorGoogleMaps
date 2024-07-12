@@ -8,14 +8,14 @@ namespace GoogleMapsComponents.Maps;
 /// </summary>
 public class GoogleClusterClickEvent : MouseEvent
 {
-    public List<GoogleMarker> Markers { get; set; }
-    public LatLngLiteral _Position { get; set; }
+    public List<GoogleMarker>? Markers { get; set; }
+    public LatLngLiteral? _Position { get; set; }
 }
 
 public class GoogleMarker
 {
     public long DataID { get; set; }
-    public LatLngLiteral Position { get; set; }
+    public LatLngLiteral? Position { get; set; }
 }
 
 public class GoogleMarkerOptions : MarkerOptions

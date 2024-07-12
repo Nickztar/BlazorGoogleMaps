@@ -7,12 +7,12 @@ namespace GoogleMapsComponents.Maps;
 /// </summary>
 public class MouseEvent : IActionArgument
 {
-    public JsObjectRef JsObjectRef { get; set; }
+    public JsObjectRef JsObjectRef { get; set; } = default!;
 
     /// <summary>
     /// The latitude/longitude that was below the cursor when the event occurred.
     /// </summary>
-    public LatLngLiteral LatLng { get; set; }
+    public LatLngLiteral LatLng { get; set; } = default!;
 
     /// <summary>
     /// Prevents this event from propagating further.

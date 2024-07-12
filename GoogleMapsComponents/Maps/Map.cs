@@ -33,7 +33,8 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
         }
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
         var dataObjectRef = await jsObjectRef.GetObjectReference("data");
-        var data = new MapData(dataObjectRef);
+        // Note the ! here, this should never fail and if it does, then google maps failed to load. Mayble add some handling?
+        var data = new MapData(dataObjectRef!);
         var map = new Map(jsObjectRef, data);
 
         JsObjectRefInstances.Add(map);
@@ -142,7 +143,7 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
     /// If the map is not yet initialized (i.e. the mapType is still null), or center and zoom have not been set then the result is null.
     /// </summary>
     /// <returns></returns>
-    public Task<LatLngBoundsLiteral> GetBounds()
+    public Task<LatLngBoundsLiteral?> GetBounds()
     {
         return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
     }
@@ -152,7 +153,7 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
     /// Note that this LatLng object is not wrapped.
     /// </summary>
     /// <returns></returns>
-    public Task<LatLngLiteral> GetCenter()
+    public Task<LatLngLiteral?> GetCenter()
     {
         return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
     }

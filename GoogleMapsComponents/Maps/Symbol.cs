@@ -15,14 +15,14 @@ public class Symbol
     /// By default, a symbol is anchored at (0, 0). 
     /// The position is expressed in the same coordinate system as the symbol's path.
     /// </summary>
-    public Point Anchor { get; set; }
+    public Point? Anchor { get; set; }
 
     /// <summary>
     /// The symbol's fill color. All CSS3 colors are supported except for extended named colors. 
     /// For symbol markers, this defaults to 'black'. 
     /// For symbols on polylines, this defaults to the stroke color of the corresponding polyline.
     /// </summary>
-    public string FillColor { get; set; }
+    public string? FillColor { get; set; }
 
     /// <summary>
     /// The symbol's fill opacity. Defaults to 0.
@@ -35,7 +35,7 @@ public class Symbol
     /// The origin is expressed in the same coordinate system as the symbol's path. 
     /// This property is unused for symbols on polylines.
     /// </summary>
-    public Point LabelOrigin { get; set; }
+    public Point? LabelOrigin { get; set; }
 
     /// <summary>
     /// The angle by which to rotate the symbol, expressed clockwise in degrees. Defaults to 0. 
@@ -54,7 +54,7 @@ public class Symbol
     /// For symbol markers, this defaults to 'black'. 
     /// For symbols on a polyline, this defaults to the stroke color of the polyline.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The symbol's stroke opacity. For symbol markers, this defaults to 1. 

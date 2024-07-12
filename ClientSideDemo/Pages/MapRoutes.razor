@@ -74,8 +74,8 @@
         {
             foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
             {
-                _durationTotalString += route.Duration.Text;
-                _distanceTotalString += route.Distance.Text;
+                _durationTotalString += route.Duration?.Text;
+                _distanceTotalString += route.Distance?.Text;
             }
         }
     }

@@ -11,7 +11,7 @@ public class MapRestriction
     /// Bounds can restrict both longitude and latitude, or can restrict latitude only. 
     /// For latitude-only bounds use west and east longitudes of -180 and 180, respectively. 
     /// </summary>
-    public LatLngBoundsLiteral latLngBounds { get; set; }
+    public LatLngBoundsLiteral? latLngBounds { get; set; }
 
     /// <summary>
     /// By default bounds are relaxed, meaning that a user can zoom out until the entire bounded area is in view. 

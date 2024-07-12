@@ -59,7 +59,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     /// Retrieves the first path.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<LatLngLiteral>> GetPath()
+    public Task<IEnumerable<LatLngLiteral>?> GetPath()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>(
             "getPath");
@@ -69,7 +69,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     /// Retrieves the paths for this polygon.
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<IEnumerable<LatLngLiteral>>> GetPaths()
+    public Task<IEnumerable<IEnumerable<LatLngLiteral>>?> GetPaths()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<IEnumerable<LatLngLiteral>>>(
             "getPaths");

@@ -16,19 +16,19 @@ public class IconSequence
     /// <summary>
     /// The icon to render on the line.
     /// </summary>
-    public Symbol Icon { get; set; }
+    public Symbol? Icon { get; set; }
 
     /// <summary>
     /// The distance from the start of the line at which an icon is to be rendered. 
     /// This distance may be expressed as a percentage of line's length (e.g. '50%') or in pixels (e.g. '50px'). 
     /// Defaults to '100%'.
     /// </summary>
-    public string Offset { get; set; }
+    public string? Offset { get; set; }
 
     /// <summary>
     /// The distance between consecutive icons on the line. 
     /// This distance may be expressed as a percentage of the line's length (e.g. '50%') or in pixels (e.g. '50px'). 
     /// To disable repeating of the icon, specify '0'. Defaults to '0'.
     /// </summary>
-    public string Repeat { get; set; }
+    public string? Repeat { get; set; }
 }

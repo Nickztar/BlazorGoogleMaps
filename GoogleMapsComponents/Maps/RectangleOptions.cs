@@ -43,7 +43,7 @@ public class RectangleOptions
     /// Map on which to display Rectangle.
     /// </summary>
     [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public Map Map { get; set; }
+    public Map? Map { get; set; }
 
     /// <summary>
     /// The stroke color. All CSS3 colors are supported except for extended named colors.

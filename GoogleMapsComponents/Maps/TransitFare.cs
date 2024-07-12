@@ -8,7 +8,7 @@ public class TransitFare
     /// <summary>
     /// An ISO 4217 currency code indicating the currency in which the fare is expressed.
     /// </summary>
-    public string currency { get; set; }
+    public string? currency { get; set; }
 
     /// <summary>
     /// The numerical value of the fare, expressed in the given currency.

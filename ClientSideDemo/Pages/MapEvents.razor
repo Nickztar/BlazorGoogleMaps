@@ -264,7 +264,7 @@
 		var marker = await Marker.CreateAsync(_map1.JsRuntime,
 			new MarkerOptions()
 				{
-				Position = await _map1.InteropObject.GetCenter(),
+				Position = await _map1.InteropObject.GetCenter() ?? new LatLngLiteral(0.0, 0.0),
 				Map = _map1.InteropObject,
 				Label = new MarkerLabel { Text = $"Test {_markers.Count()}", FontWeight = "bold" },
 				Draggable=true,

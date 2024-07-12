@@ -50,10 +50,11 @@
 
     private async Task AddMarker()
     {
+        var center = await _map1.InteropObject.GetCenter() ?? new LatLngLiteral(0.0,0.0);
         var marker = await Marker.CreateAsync(_map1.JsRuntime, _markers.Count() % 2 == 0 ?
             new MarkerOptions()
             {
-                Position = await _map1.InteropObject.GetCenter(),
+                Position = center,
                 Map = _map1.InteropObject,
                 Label = new MarkerLabel { Text = $"Test {_markers.Count()}", FontWeight = "bold" },
                 Draggable=true,
@@ -65,7 +66,7 @@
             } :
             new MarkerOptions()
             {
-                Position = await _map1.InteropObject.GetCenter(),
+                Position = center,
                 Map = _map1.InteropObject,
                 Label = $"Test {_markers.Count()}",
                 Draggable=true,
@@ -121,7 +122,7 @@
 
         var lastMarker = _markers.Peek();
         var center = await _map1.InteropObject.GetCenter();
-        await lastMarker.SetPosition(center);
+        await lastMarker.SetPosition(center ?? new LatLngLiteral(0.0, 0.0));
     }
 
     private async Task UpdateLabelText(ChangeEventArgs e)

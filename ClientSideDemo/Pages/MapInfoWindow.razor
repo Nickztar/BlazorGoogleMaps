@@ -31,7 +31,7 @@
 
     private async Task AddMarker()
     {
-        var position = await _map1.InteropObject.GetCenter();
+        var position = await _map1.InteropObject.GetCenter() ?? new LatLngLiteral(0.0,0.0);
 
         var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
         {

@@ -50,7 +50,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<PolygonList> SyncAsync(PolygonList? list, IJSRuntime jsRuntime, Dictionary<string, PolygonOptions> opts, Action<MouseEvent, string, Polygon>? clickCallback = null)
+    public static async Task<PolygonList?> SyncAsync(PolygonList? list, IJSRuntime jsRuntime, Dictionary<string, PolygonOptions> opts, Action<MouseEvent, string, Polygon>? clickCallback = null)
     {
         if (opts.Count == 0)
         {
@@ -64,7 +64,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
         {
             if (list == null)
             {
-                list = await PolygonList.CreateAsync(jsRuntime, new Dictionary<string, PolygonOptions>());
+                list = await CreateAsync(jsRuntime, new Dictionary<string, PolygonOptions>());
                 if (clickCallback != null)
                 {
                     list.EntityClicked += (sender, e) =>
@@ -80,7 +80,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
     }
 
     private PolygonList(JsObjectRef jsObjectRef, Dictionary<string, Polygon> polygons)
-        : base(jsObjectRef, polygons)
+        : base(jsObjectRef, polygons, js => new Polygon(js))
     {
     }
 
@@ -104,30 +104,15 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
         await base.AddMultipleAsync(opts, "google.maps.Polygon");
     }
 
-    public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
+    public Task<Dictionary<string, bool>> GetEditables(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
-
-        if (matchingKeys.Any())
-        {
-            Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-            Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-            return _jsObjectRef.InvokeMultipleAsync<bool>(
-                "getEditable",
-                dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-        }
-        else
-        {
-            return ComputeEmptyResult<bool>();
-        }
+        return GetKeysAsync<bool, bool>("getEditable", r => r, filterKeys);
     }
 
     public Task SetEditables(Dictionary<string, bool> editables)
     {
-        Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Polygons[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setEditable",
-            dictArgs);
+            ToJsDictionary(editables));
     }
 }

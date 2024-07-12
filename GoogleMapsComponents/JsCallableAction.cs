@@ -34,7 +34,9 @@ public class JsCallableAction
         var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>
             {
+#pragma warning disable IL2026
                 var obj = Helper.DeSerializeObject(x.jToken, x.type);
+#pragma warning restore IL2026
                 if (obj is IActionArgument actionArg)
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));

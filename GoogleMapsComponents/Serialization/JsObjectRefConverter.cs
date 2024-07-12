@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -12,10 +13,12 @@ internal class JsObjectRefConverter<T> : JsonConverter<T>
         throw new NotImplementedException();
     }
 
-    public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Values should not be trimmed.")]
+    public override void Write(Utf8JsonWriter writer, T? value, JsonSerializerOptions options)
     {
+        if (value is null) return;
+        
         writer.WriteStartObject();
-
         using var doc = JsonSerializer.SerializeToDocument(new JsObjectRef1(value.Guid), typeof(JsObjectRef1), options);
 
         foreach (var prop in doc.RootElement.EnumerateObject())

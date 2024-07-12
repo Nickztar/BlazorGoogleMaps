@@ -12,7 +12,7 @@ public class DrawingControlOptions
     /// The hand icon (which corresponds to the null drawing mode) is always available and is not to be specified in this array. 
     /// Defaults to ['marker', 'polyline', 'rectangle', 'circle', 'polygon'].
     /// </summary>
-    public IEnumerable<OverlayType> DrawingModes { get; set; }
+    public IEnumerable<OverlayType>? DrawingModes { get; set; }
 
     /// <summary>
     /// Position id. Used to specify the position of the control on the map. 
