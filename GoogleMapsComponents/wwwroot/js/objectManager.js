@@ -878,7 +878,19 @@
                 });
 
                 mapObjects[guid].addMarkers(originalMarkers, noDraw);
-            }
+            },
+            addAdvancedComponent: function (id, options) {
+                const map = mapObjects[options.mapId];
+                const content = document.querySelector(`[gmap-id="marker_${id}"]`);
+                if (!content) return null; // Should never be reached?
+                const advancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
+                    map,
+                    content,
+                    position: options.position,
+                    title: options.title,
+                });
+                addMapObject(id, advancedMarkerElement);
+            },
         }
     };
 }();

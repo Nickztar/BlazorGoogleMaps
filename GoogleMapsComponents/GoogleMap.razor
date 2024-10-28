@@ -9,6 +9,9 @@
 @inject IJSRuntime JSRuntime
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
+<CascadingValue Name="Map" Value="@InteropObject" IsFixed="false">
+    @ChildContent
+</CascadingValue>
 
 @code {
     #nullable enable
@@ -30,6 +33,9 @@
 
     [Parameter]
     public string? CssClass { get; set; }
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set;  }
 
     private string _height = "500px";
 
@@ -60,7 +66,11 @@
             //moduleImports.AddRange(await Task.WhenAll(tasks.ToArray()));
         }
 
-        await InitAsync(Element, Options);
+        if (InteropObject is null)
+        {
+            await InitAsync(Element, Options);
+            StateHasChanged();
+        }
 
         //Debug.WriteLine("Init finished");
 
@@ -69,7 +79,7 @@
 
     protected override bool ShouldRender()
     {
-        return false;
+        return InteropObject != null;
     }
 
     void IDisposable.Dispose()
