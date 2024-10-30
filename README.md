@@ -73,6 +73,7 @@ If you want to use marker clustering add this script as well:
 }
 ```
 
+test commit
 ## Samples
  Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which are most to date
  
